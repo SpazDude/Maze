@@ -77,6 +77,8 @@ namespace UnitTestMaze
             m.AddEdge(n1, n2);
             Assert.IsTrue(m.HasEdge(n1, n2));
             Assert.IsFalse(m.HasEdge(n1, n3));
+            Assert.IsTrue(n1.right); Assert.IsTrue(n1.left); Assert.IsTrue(n1.top); Assert.IsFalse(n1.bottom);
+            Assert.IsTrue(n2.left); Assert.IsTrue(n2.left); Assert.IsFalse(n2.top); Assert.IsTrue(n2.bottom);
         }
 
         [TestMethod, ExpectedException(typeof(InvalidOperationException))]
@@ -86,6 +88,18 @@ namespace UnitTestMaze
             var n1 = m.nodes[0, 0];
             var n3 = m.nodes[1, 1];
             m.AddEdge(n1, n3);
+        }
+
+        [TestMethod]
+        public void TestCreateImage()
+        {
+            const string imageName = "./testImg.png";
+            var m = new MazeBuilder(60, 40);
+            m.CreateMazeWithOnePath();
+            if (File.Exists(imageName)) File.Delete(imageName);
+            var stream = new FileStream(imageName, FileMode.Create);
+            m.CreateImage(stream);
+            stream.Close();
         }
     }
 }

@@ -1,26 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Primitives;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.Primitives;
+using SixLabors.Shapes;
 
 namespace MazeLibrary
 {
-    public class Node
-    {
-        public int x, y;
-        public int group;
-    }
-
-    public class Edge
-    {
-        public Node[] nodes = new Node[2];
-
-        public Edge(Node n1, Node N2)
-        {
-            nodes[0] = n1;
-            nodes[1] = N2;
-        }
-    }
-
-
     public class MazeBuilder
     {
         public int x, y;
@@ -61,11 +51,11 @@ namespace MazeLibrary
                 var direction = rnd.Next(100);
                 try
                 {
-                    if (direction > 50)
+                    if (direction < 40)
                     {
                         AddEdge(n, nodes[n.x + 1, n.y]);
                     }
-                    else
+                    if (direction > 60)
                     {
                         AddEdge(n, nodes[n.x, n.y + 1]);
                     }
@@ -152,8 +142,68 @@ namespace MazeLibrary
             if (!HasEdge(n1, n2))
             {
                 edges.Add(new Edge(n1, n2));
+                if (n1.x < n2.x)
+                {
+                    n1.right = false;
+                    n2.left = false;
+                }
+                if (n1.x > n2.x)
+                {
+                    n1.left = false;
+                    n2.right = false;
+                }
+                if (n1.y < n2.y)
+                {
+                    n1.bottom = false;
+                    n2.top = false;
+                }
+                if (n1.y > n2.y)
+                {
+                    n1.top = false;
+                    n2.bottom = false;
+                }
                 MergeGroups(n1.group, n2.group);
             }
+        }
+
+        public void CreateImage(Stream stream)
+        {
+            const int scale = 20;
+            var image = new Image<Rgba32>(x * scale, y * scale);
+            var builder = new PathBuilder();
+            image.Mutate(ctx => ctx.Fill(Color.White));
+            foreach (var n in nodes)
+            {
+                var origin = new PointF(n.x * scale, n.y * scale);
+                builder.SetOrigin(origin);
+                if (n.left)
+                {
+                    builder.StartFigure();
+                    builder.AddLine(0, 0, 0, scale);
+                    builder.CloseFigure();
+                }
+                if (n.bottom)
+                {
+                    builder.StartFigure();
+                    builder.AddLine(0, scale, scale, scale);
+                    builder.CloseFigure();
+                }
+                if (n.right)
+                {
+                    builder.StartFigure();
+                    builder.AddLine(scale, scale, scale, 0);
+                    builder.CloseFigure();
+                }
+                if (n.top)
+                {
+                    builder.StartFigure();
+                    builder.AddLine(scale, 0, 0, 0);
+                    builder.CloseFigure();
+                }
+            }
+            var path = builder.Build();
+            image.Mutate(ctx => ctx.Draw(Color.Blue, 2, path));
+            image.SaveAsPng(stream);
         }
     }
 }
