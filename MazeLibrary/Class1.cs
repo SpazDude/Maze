@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Maze
+namespace MazeLibrary
 {
     public class Node
     {

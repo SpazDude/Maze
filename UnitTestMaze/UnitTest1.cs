@@ -1,4 +1,4 @@
-using Maze;
+using MazeLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Concurrent;
@@ -43,7 +43,7 @@ namespace UnitTestMaze
         [TestMethod]
         public void TestMethod1()
         {
-            var m = new Maze.MazeBuilder(2, 2);
+            var m = new MazeBuilder(2, 2);
             m.AddEdge(m.nodes[0, 0], m.nodes[0, 1]);
             m.AddEdge(m.nodes[0, 1], m.nodes[1, 1]);
             PrintMaze(m);
@@ -53,7 +53,7 @@ namespace UnitTestMaze
         [TestMethod]
         public void TestMethod2()
         {
-            var m = new Maze.MazeBuilder(16,16);
+            var m = new MazeBuilder(16,16);
             m.CreateMazeWithOnePath();
             PrintMaze(m);
         }
@@ -61,7 +61,7 @@ namespace UnitTestMaze
         [TestMethod]
         public void TestAreAdjacentEdges()
         {
-            var m = new Maze.MazeBuilder(2, 2);
+            var m = new MazeBuilder(2, 2);
             Assert.IsTrue(m.AreAdjacentEdges(m.nodes[0, 0], m.nodes[0, 1]));
             Assert.IsTrue(m.AreAdjacentEdges(m.nodes[0, 0], m.nodes[1, 0]));
             Assert.IsFalse(m.AreAdjacentEdges(m.nodes[0, 0], m.nodes[1, 1]));
@@ -70,7 +70,7 @@ namespace UnitTestMaze
         [TestMethod]
         public void TestHasEdge1()
         {
-            var m = new Maze.MazeBuilder(2, 2);
+            var m = new MazeBuilder(2, 2);
             var n1 = m.nodes[0, 0];
             var n2 = m.nodes[0, 1];
             var n3 = m.nodes[1, 0];
@@ -82,7 +82,7 @@ namespace UnitTestMaze
         [TestMethod, ExpectedException(typeof(InvalidOperationException))]
         public void TestHasEdge2()
         {
-            var m = new Maze.MazeBuilder(2, 2);
+            var m = new MazeBuilder(2, 2);
             var n1 = m.nodes[0, 0];
             var n3 = m.nodes[1, 1];
             m.AddEdge(n1, n3);
